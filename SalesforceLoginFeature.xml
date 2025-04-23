@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="SF Login Test Suite">
+    <listeners>
+        <listener class-name="com.aventstack.chaintest.plugins.ChainTestListener"/>
+    </listeners>
+    <test verbose="2" preserve-order="true" name="SalesForce Login Feature">
+        <classes>
+            <class name="SalesForce.SFLogin">
+                <methods>
+                    <include name="LoginSF"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
