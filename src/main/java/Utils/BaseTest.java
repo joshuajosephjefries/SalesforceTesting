@@ -1,5 +1,8 @@
 package Utils;
 
+import com.aventstack.chaintest.plugins.ChainTestListener;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
 
@@ -82,10 +85,15 @@ public class BaseTest {
         driver = DriverSetup.SetDriver();
     }
 
-    @AfterClass
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+//    @AfterClass
+//    public void tearDown() {
+//        if (driver != null) {
+//            driver.quit();
+//        }
+//    }
+
+    public void embedScreenshot() {
+        byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+        ChainTestListener.embed(screenshot, "image/png");
     }
 }
