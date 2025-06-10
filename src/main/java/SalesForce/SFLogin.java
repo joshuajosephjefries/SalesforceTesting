@@ -9,8 +9,10 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
+import java.sql.Driver;
 import java.time.Duration;
 
 public class SFLogin extends BaseTest {
@@ -20,20 +22,8 @@ public class SFLogin extends BaseTest {
 
         ChainTestListener.log("Navigating to Salesforce");
         driver.get("https://www.salesforce.com");
-
         clickLoginInShadowDom();
         embedScreenshot();
-//        //This Element is inside 2 nested shadow DOM.
-//        SearchContext shadow1 = driver.findElement(By.cssSelector("hgf-c360nav[locale='in']")).getShadowRoot();
-//        SearchContext shadow2 = shadow1.findElement(By.cssSelector("hgf-c360login[aria-haspopup='true']")).getShadowRoot();
-//        shadow2.findElement(By.cssSelector(" hgf-popover:nth-child(1) > hgf-button:nth-child(1) > span:nth-child(2)")).click();
-//
-//        //This Element is inside 2 nested shadow DOM.
-//        SearchContext shadow3 = driver.findElement(By.cssSelector("hgf-c360nav[locale='in']")).getShadowRoot();
-//        SearchContext shadow4 = shadow3.findElement(By.cssSelector("hgf-c360login[aria-haspopup='true']")).getShadowRoot();
-//        shadow4.findElement(By.cssSelector("a[href='https://login.salesforce.com/?locale=in']")).click();
-//        embedScreenshot();
-
 
         ChainTestListener.log("🔗 Entering Username");
         WebElement UserName = driver.findElement(By.xpath("//div[@id='username_container']/input[@id='username']"));
@@ -52,7 +42,6 @@ public class SFLogin extends BaseTest {
 
         WebElement LoginButton = driver.findElement(By.xpath("//input[@id='Login']"));
         LoginButton.click();
-        embedScreenshot();
         // Explicit wait to load the page
         new WebDriverWait(driver, Duration.ofSeconds(8)).until((ExpectedCondition<Boolean>) wd ->
                 ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
@@ -72,6 +61,44 @@ public class SFLogin extends BaseTest {
             embedScreenshot();
             throw new AssertionError("App Launcher was not found after login", e);
         }
+    }
+
+    @Test
+    public void SalesConsole() {
+        ChainTestListener.log("🔗 Navigating to Sales Console");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+        // Click App Launcher
+        WebElement appLauncher = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@title='App Launcher']")));
+        appLauncher.click();
+
+        // Wait for View All Applications to appear and be clickable
+        WebElement viewAll = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[@aria-label='View All Applications']")));
+        viewAll.click();
+
+        // Wait for Sales Console tile to be visible
+        WebElement salesConsole = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//lightning-formatted-rich-text//span/p[text()='Sales Console']")));
+        salesConsole.click();
+
+
+        // Verify Sales Console loaded
+        boolean actualTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[@data-aura-class='navexWorkspaceManager']"))).isDisplayed();
+        AssertJUnit.assertTrue(actualTitle);
+
+        new WebDriverWait(driver, Duration.ofSeconds(15)).until(
+                webDriver -> ((JavascriptExecutor) webDriver)
+                        .executeScript("return document.readyState").equals("complete"));
+        embedScreenshot();
+        ChainTestListener.log("✅ Navigated to Sales Console");
+
+        // Interact with navigation dropdown
+        WebElement dropdown = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[@title='Show Navigation Menu']")));
+        dropdown.click();
     }
 
     private void clickLoginInShadowDom() {

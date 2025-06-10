@@ -9,6 +9,7 @@
             <class name="SalesForce.SFLogin">
                 <methods>
                     <include name="LoginSF"/>
+                    <include name="SalesConsole"/>
                 </methods>
             </class>
         </classes>
